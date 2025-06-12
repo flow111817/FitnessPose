@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>俯卧撑姿态检测系统</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/png">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .upload-section {
+            border: 2px dashed #3498db;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            background-color: #f8f9fa;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .upload-section:hover {
+            background-color: #e3f2fd;
+            border-color: #2980b9;
+        }
+        .upload-icon {
+            font-size: 48px;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        .file-input {
+            display: none;
+        }
+        .error {
+            color: #e74c3c;
+            background-color: #fdeded;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            display: none;
+        }
+        .instructions {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+        .instructions h3 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        .instructions ul {
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>俯卧撑姿态检测系统</h1>
+        
+        <div class="upload-section" id="uploadArea">
+            <div class="upload-icon">📁</div>
+            <h2>上传俯卧撑视频</h2>
+            <p>支持格式: MP4, AVI, MOV, MKV</p>
+            <button class="btn" onclick="document.getElementById('fileInput').click()">选择文件</button>
+            <form id="uploadForm" method="post" enctype="multipart/form-data" action="{{ url_for('upload_file') }}">
+                <input type="file" id="fileInput" name="file" class="file-input" accept="video/*" onchange="submitForm()">
+            </form>
+        </div>
+        
+        <div class="error" id="errorMessage">
+            {{ error if error else '' }}
+        </div>
+        
+        <div class="instructions">
+            <h3>使用说明：</h3>
+            <ul>
+                <li>上传包含俯卧撑动作的视频文件</li>
+                <li>系统会自动分析您的俯卧撑姿势</li>
+                <li>视频处理时间取决于视频长度（约1分钟处理1分钟视频）</li>
+                <li>处理完成后将显示详细的分析报告和结果视频</li>
+                <li>确保视频中人物清晰可见，背景简洁</li>
+                <li>最佳拍摄角度：侧面拍摄，全身可见</li>
+            </ul>
+        </div>
+        <div class="footer mt-5">
+            <p>© 2025 俯卧撑姿态分析系统 | 基于YOLO-v8 Posed的姿态估计模型</p>
+        </div>
+    </div>
+    
+    <script>
+        function submitForm() {
+            const fileInput = document.getElementById('fileInput');
+            const errorMsg = document.getElementById('errorMessage');
+            
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const ext = file.name.split('.').pop().toLowerCase();
+                const allowed = ['mp4', 'avi', 'mov', 'mkv'];
+                
+                if (allowed.includes(ext)) {
+                    document.getElementById('uploadForm').submit();
+                    // 显示加载状态
+                    document.querySelector('.upload-section').innerHTML = `
+                        <div class="upload-icon">⏳</div>
+                        <h2>处理中...</h2>
+                        <p>请稍候，正在分析您的视频</p>
+                    `;
+                } else {
+                    errorMsg.textContent = '不支持的文件类型。请上传MP4、AVI、MOV或MKV格式的视频。';
+                    errorMsg.style.display = 'block';
+                }
+            }
+        }
+        
+    </script>
+</body>
+</html>
