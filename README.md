@@ -30,4 +30,4 @@ python app.py
 
 ## Contributing
 
-欢迎并鼓励为**FitnessPose**做出贡献。
+Welcome and encourage contributions to **FitnessPose**.
