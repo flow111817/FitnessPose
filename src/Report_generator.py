@@ -4,6 +4,7 @@ from scipy.ndimage import gaussian_filter1d
 from config import REPORT_PATH,VIDEO_PATH
 import cv2
 import numpy as np
+import matplotlib.font_manager as fm
 
 class Generater() :
     def __init__(self,frame_width,frame_height):
@@ -12,10 +13,9 @@ class Generater() :
         self.frame_height = frame_height
         self.report_name = REPORT_PATH + f"report_{datetime.now().strftime('%H%M%S')}.png"
         self.video_name = VIDEO_PATH + f"video_{datetime.now().strftime('%H%M%S')}.mp4"
-
+        
     def generate_report(self,analysis_data):
         """生成并保存分析报告图表"""
-        plt.rcParams['font.sans-serif'] = ['Microsoft YaHei']
 
         smoothed_left = gaussian_filter1d(analysis_data['left_angle_list'], sigma=2)
         smoothed_right = gaussian_filter1d(analysis_data['right_angle_list'], sigma=2)
@@ -25,13 +25,13 @@ class Generater() :
         # 角度变化图
         plt.subplot(2,2,(1,2))
         plt.plot(analysis_data['time_list'], smoothed_left, 
-                color='C1', label='左手角度')
+                color='C1', label='left angle')
         plt.plot(analysis_data['time_list'], smoothed_right, 
-                color='C0', label='右手角度')
-        plt.axhline(y=90, color='r', linestyle='--', label='下阈值')
-        plt.axhline(y=160, color='g', linestyle='--', label='上阈值')
-        plt.xlabel('时间 (s)')
-        plt.ylabel('角度 (°)')
+                color='C0', label='right angle')
+        plt.axhline(y=90, color='r', linestyle='--', label='low threshold')
+        plt.axhline(y=160, color='g', linestyle='--', label='upper threshold')
+        plt.xlabel('time (s)')
+        plt.ylabel('angle (°)')
         plt.legend()
         plt.grid(True)
         
@@ -39,19 +39,19 @@ class Generater() :
         plt.subplot(2,2,3)
         plt.plot(analysis_data['time_list'], analysis_data['pushup_count_list'], 
                 color='C1')
-        plt.xlabel('时间 (s)')
-        plt.ylabel('俯卧撑个数')
+        plt.xlabel('time (s)')
+        plt.ylabel('pushup counts')
         plt.grid(True)
         
         # 雷达图
         ax4 = fig.add_subplot(2, 2, 4, polar=True)
         categories = [
-            '节奏快慢得分',
-            '节奏稳定得分', 
-            '动作标准得分', 
-            '动作均衡得分', 
-            '动作数量得分', 
-            '躯干稳定得分'
+            'rhythm',
+            'rhythm stability', 
+            'standard', 
+            'balanced', 
+            'number', 
+            'Trunk stability'
             ]
         values = [analysis_data['rhythm_speed'],
                   analysis_data['pushup_std'],
@@ -74,7 +74,7 @@ class Generater() :
         ax4.fill(angles, values, alpha=0.25)
 
         # 添加标题和图例
-        ax4.set_title('能力图')
+        ax4.set_title('Capacity')
 
         plt.tight_layout()
         plt.savefig(self.report_name, dpi=300)

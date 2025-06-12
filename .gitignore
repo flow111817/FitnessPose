@@ -1,3 +1,8 @@
 项目优化.txt
 项目BUG.txt
 train/*
+data/reports/*
+data/videos/*
+static/uploads/*
+.dockerignore
+Dockerfile

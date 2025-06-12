@@ -154,5 +154,5 @@ def show_video(result_id):
 if __name__ == '__main__':
     # 初始化结果存储
     app.config['results'] = {}
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000 ,debug=True)
 
